@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/common.css') }}">
+    <title>Home</title>
+    <style>
+        .btn-approve {
+            background-color: #10ffc3;
+            cursor: pointer;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        table {
+          border-collapse: collapse;
+          width: 100%;
+          background-color: white;
+          border: 1px solid black;
+        }
+        
+        th, td {
+          text-align: left;
+          padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+          background-color: #D6EEEE;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: white !important;">Welcome '{{loginemail}}', you have successfully logged in</h1>
+    <a href="{{url_for('logoutUser')}}" style="color: yellow !important;">Sign Out</a>
+
+    {% if current_user.isadmin == True %}
+    <p>
+        <h3 style="color: white !important;">Admin User Management Portal: Click <a style="color: white !important;" href="/admin">Admin</a></h3>
+        
+    </p>
+    {% else %}
+    {% endif %}
+
+    <div style="width: 100%; display: table;">
+        <div style="display: table-row">        
+            <div style="width: 50%; display: table-cell;">
+                <h3 style="text-decoration: underline;color: whitesmoke !important;" onclick="$('#creatnewgroupdiv').toggle()">1) Create / Delete your Group:</h3>
+                <div style="display:none;" id="creatnewgroupdiv">
+                    <form class="form-creategroup" action="createdeletegroup" method="post" name="createdeletegroup">
+                        <label for="groupname" style="color: white !important;">Group name</label> <input class="form-styling" type="text" name="create_grpname" id="create_grpname" placeholder="" minlength=5 maxlength=30/>						 
+                        <label for="groupdesc" style="color: white !important;">Group Desc</label> <input class="form-styling" type="text" name="create_grpdesc" placeholder="" minlength=5 maxlength=30 />
+                        
+                        <input type="radio" id="radcrtgrp" name="radcrtdelgrp" value="Create">
+                        <label for="creategrp" style="color: white !important;">Create</label>
+                        <input type="radio" id="raddelgrp" name="radcrtdelgrp" value="Delete">
+                        <label for="deletegrp" style="color: white !important;">Delete</label><br><br>
+                        
+                        <button class="btn-createdeletegrp" name="createdeletegroup" >Submit</button>
+                   </form>
+                </div>
+            </div>
+            <div style="display: table-cell;">
+                <h3 style="text-decoration: underline;color: whitesmoke !important;" onclick="$('#joingroupdiv').toggle()">2) Request to Join a Group:</h3>
+                <div style="display:none;" id="joingroupdiv">
+                    <form class="form-creategroup" action="joinexistinggroup" method="post" name="joinexistinggroup">
+                        <label for="groupname" style="color: white !important;">Group name</label>
+                        <select class="select form-styling" name="join_grpname" multiple>
+                            {% for eachgroupindex in othergroups %}
+                            <option value={{eachgroupindex}}>{{eachgroupindex}}</option>
+                            {% endfor %}
+                        </select>					 
+                        <button class="btn-createdeletegrp" name="joinexistinggroup" >Join</button>
+                   </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div style="height: 60px;">
+            <h3 style="width: 760px;float:left;text-decoration: underline;color: whitesmoke !important;" onclick="grptables(this,'req');">3) Access Requests for my Groups:</h3>
+            <h3 style="width: 760px;float:left;text-decoration: underline;color: whitesmoke !important;" onclick="grptables(this,'view');">4) View my Group:</h3>
+        </div>
+        <div>    
+            <div style="display:none; overflow-y: auto;" id="viewRequestInMyGroups">
+                <table id="viewUsersInMyGroups">
+                    <tr>
+                        <th>Group Name</th>
+                        <th>Requested By</th>
+                        <th style="display: none;">User Status</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for eachgroupindex in groupaccessrequests %}
+                    <tr>
+                        <td class="grpName">{{ eachgroupindex[0] }}</td>
+                        <td class="reqby">{{ eachgroupindex[1] }}</td>
+                        <td style="display: none;" class="userstatus">{{ eachgroupindex[2] }}</td>
+                        <td><button style="margin-left: -15%;" class="btn-approve addToGroup" onclick="myGroupGrant(this,'Accept')">Accept</button><button style="margin-left: -15%;" class="btn-approve revokeFromGroup" onclick="myGroupGrant(this,'Revoke')">Revoke</button><button style="margin-left: 15%;"class="btn-approve rejectRequest" onclick="myGroupGrant(this,'Reject')">Reject</button></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <div style="display:none;" id="grantgroupaccessdiv">
+                    <form class="form-creategroup" action="grantgroupaccess" method="post" name="grantgroupaccess">
+                        <input class="form-styling" type="text" name="grantgroupaccess_grpname" id="grantgroupaccess_grpname" placeholder="" minlength=5 maxlength=30 />
+                        <input class="form-styling" type="text" name="grantgroupaccess_useremail" id="grantgroupaccess_useremail" placeholder="" minlength=5 maxlength=30 />
+                        <input class="form-styling" type="text" name="grantgroupaccess_action" id="grantgroupaccess_action" placeholder="" minlength=5 maxlength=30 />					 
+                        <button name="grantgroupaccess" id="grantgroupaccessbutton">submit</button>
+                   </form>
+                </div>                
+            </div>
+            <div style="display:none; overflow-y: auto;" id="viewMyGroups">
+                <table>
+                    <tr>
+                        <th>Group Name</th>
+                        <th>Group Desc</th>
+                        <th>Owner</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for eachgroupindex in mygroups %}
+                    <tr>
+                        <td class="grpName">{{ eachgroupindex[0] }}</td>
+                        <td class="grpDesc">{{ eachgroupindex[1] }}</td>
+                        <td class="grpOwner">{{ eachgroupindex[2] }}</td>
+                        <td><button class="btn-approve" onclick="selectedGroup(this,'{{eachgroupindex.groupname}}')">Select this</button></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <div style="display:none;" id="selectedgroupdiv">
+                    <form class="form-creategroup" action="selectedgroup" method="post" name="selectedgroup">
+                        <input class="form-styling" type="text" name="selectedgroup_grpname" id="selectedgroup_grpname" placeholder="" minlength=5 maxlength=30 />
+                        <input class="form-styling" type="text" name="selectedgroup_owner" id="selectedgroup_owner" placeholder="" minlength=5 maxlength=30 />					 
+                        <button name="selectedgroup" id="selectedgroupbutton">submit</button>
+                   </form>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src= "{{ url_for('static',filename='js/ToolHome.js')}}"></script>
+</body>
+</html>

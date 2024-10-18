@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>	
+	<head>
+		<meta charset="UTF-8">
+		<title>Share Securely Services</title>
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/UserLogin.css') }}">
+	</head>
+	<body>
+		<div class="container">
+			<div class="frame">
+				<div class="nav">
+					<ul class="links">
+						<li class="signin-active"><a class="btn-list-users">Existing User</a></li>
+						<li class="signup-inactive"><a class="btn-list-users">New User</a></li>
+					</ul>
+				</div>
+				<div ng-app ng-init="checked = false">
+					<!--<div class="form-signin">-->
+					<form class="form-signin" action="loginUser" method="POST" name="loginUser">
+						<label for="email">Email</label> <input class="form-styling" type="text" name="login_email" placeholder="" />
+						<label for="password">Password</label> <input class="form-styling" type="password" name="login_password" placeholder="" />
+						<button class="btn-signin">Login</button>
+					</form>
+					
+					<!--<div class="form-signup">-->
+					<form class="form-signup" action="registerNewUser" method="POST" name="registerNewUser">
+						 <label for="email">Email</label> <input class="form-styling" type="text" name="signup_email" id="signup_email" placeholder="" minlength=16 maxlength=30 />
+						 <label for="firstname">First name</label> <input class="form-styling" type="text" name="signup_fname" placeholder="" minlength=5 maxlength=30 />						 
+						 <label for="lastname">Last Name</label> <input class="form-styling" type="text" name="signup_lname" placeholder="" minlength=5 maxlength=30 />
+						 <label for="password">Create password</label> <input class="form-styling" type="password" name="signup_confirmpassword" placeholder="" minlength=5 maxlength=30 />
+						 <label for="groupselection">Choose Group</label>						 
+						 <select class="select form-styling" name="signup_group" multiple>
+							{% for eachgroupindex in availablegroups %}
+							<option value={{eachgroupindex}}>{{eachgroupindex}}</option>
+							{% endfor %}
+						</select>						 
+						 <button class="btn-signup" id="newuserregistration">Sign Up</button>
+					</form> 
+					<!-- </div>-->
+					
+					<div class="success">
+						<path fill="#ffffff" d="M40.61,23.03L26.67,36.97L13.495,23.788c-1.146-1.147-1.359-2.936-0.504-4.314 c3.894-6.28,11.169-10.243,19.283-9.348c9.258,1.021,16.694,8.542,17.622,17.81c1.232,12.295-8.683,22.607-20.849,22.042 c-9.9-0.46-18.128-8.344-18.972-18.218c-0.292-3.416,0.276-6.673,1.51-9.578" />
+						<div class="successtext">
+							<p> New User registered, Kindly check back later for access confirmation.</p>
+							<p> click <a href="#" onclick="window.location.reload(true);">here</a> to redirect to Login Page .</p>
+						</div>
+					</div>
+				</div>
+				<div class="forgot" >
+					<a class="forgetpassword-font" data-toggle="modal" data-target="#forgotPasswordDialog" onclick="$('#viewGroups').toggle()">Forgot your password?</a>
+					<div style="color: navajowhite; display: none;" id="viewGroups">
+						Please drop an email to 'support@s3.com' for requests to change your forgotten password
+					</div>
+				</div>			
+			</div>
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src= "{{ url_for('static',filename='js/UserLogin.js')}}"></script>	
+	</body>
+</html>

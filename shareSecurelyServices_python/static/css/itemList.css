@@ -1,0 +1,17 @@
+.delItem {
+    display: none;
+}
+
+.btn-addFeedback{
+    background-color: #ff10b7;
+    cursor: pointer;
+    font-size: 13px;
+    text-align: center;
+}
+
+.btn-deleteItem{
+    background-color: #dbff10;
+    cursor: pointer;
+    font-size: 13px;
+    text-align: center;
+}
